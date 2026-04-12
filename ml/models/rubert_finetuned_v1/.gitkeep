@@ -1,0 +1,9 @@
+# ML models directory
+# Actual model files (.pb, .h5) are stored in Git LFS or external storage
+# Structure:
+#   rubert_finetuned_v1/
+#     saved_model.pb
+#     variables/
+#       variables.data-*
+#       variables.index
+#     config.json

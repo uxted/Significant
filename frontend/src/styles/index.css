@@ -1,0 +1,641 @@
+/* =============================================
+   GLOBAL STYLES
+   ============================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  width: 100%;
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+
+.header {
+  background: #1a1a2e;
+  color: white;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-menu a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.user-menu a:hover {
+  color: white;
+}
+
+.user-email {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.btn-logout,
+.btn-login {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-login {
+  background: #0f3460;
+}
+
+/* =============================================
+   DASHBOARD LAYOUT
+   ============================================= */
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 24px;
+}
+
+/* =============================================
+   FILTERS PANEL
+   ============================================= */
+
+.filters-panel {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.filters-panel h3 {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+.filter-group {
+  margin-bottom: 16px;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.filter-group input[type="text"],
+.filter-group input[type="date"],
+.filter-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.date-range {
+  display: flex;
+  gap: 8px;
+}
+
+.date-range input {
+  flex: 1;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn-apply {
+  flex: 1;
+  background: #0f3460;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-reset {
+  flex: 1;
+  background: #eee;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* =============================================
+   NEWS SECTION
+   ============================================= */
+
+.news-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.news-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.news-header h2 {
+  font-size: 1.3rem;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.last-update {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.btn-refresh {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.summary-bar {
+  background: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+}
+
+.summary-high {
+  color: #e94560;
+  font-weight: 600;
+}
+
+.summary-medium {
+  color: #f5a623;
+  font-weight: 600;
+}
+
+.summary-low {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+/* =============================================
+   NEWS FEED & CARDS
+   ============================================= */
+
+.news-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.news-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #ddd;
+  transition: box-shadow 0.2s;
+}
+
+.news-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.news-card[data-significance="HIGH"] {
+  border-left-color: #e94560;
+}
+
+.news-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.news-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.significance-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-high {
+  background: #fde8ec;
+  color: #e94560;
+}
+
+.badge-medium {
+  background: #fff3e0;
+  color: #f5a623;
+}
+
+.badge-low {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.news-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.news-title {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.news-summary {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+
+.news-category-tag {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.asset-ticker {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.load-more-btn {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+/* =============================================
+   NEWS DETAIL
+   ============================================= */
+
+.news-detail {
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.news-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.news-detail h1 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.category-tag {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.news-detail-body {
+  margin-bottom: 24px;
+}
+
+.news-full-text {
+  margin-top: 16px;
+  line-height: 1.8;
+}
+
+.news-assets h4 {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.asset-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.asset-ticker-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f3e5f5;
+  color: #7b1fa2;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.asset-ticker-tag button {
+  background: none;
+  border: none;
+  color: #7b1fa2;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.news-detail-footer {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.btn-original,
+.btn-back {
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.btn-original {
+  background: #0f3460;
+  color: white;
+}
+
+.btn-back {
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+/* =============================================
+   LOGIN FORM
+   ============================================= */
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.login-form {
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form h2 {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.btn-submit {
+  width: 100%;
+  background: #0f3460;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: #fde8ec;
+  color: #e94560;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.9rem;
+}
+
+/* =============================================
+   BOOKMARKS & SUBSCRIPTIONS
+   ============================================= */
+
+.bookmarks-page,
+.subscriptions-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.bookmarks-page h2,
+.subscriptions-page h2 {
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.empty-hint {
+  font-size: 0.9rem;
+  margin-top: 8px;
+  color: #999;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* =============================================
+   PRIVACY PAGE
+   ============================================= */
+
+.privacy-page {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-page h2 {
+  margin-bottom: 24px;
+}
+
+.privacy-page section {
+  margin-bottom: 24px;
+}
+
+.privacy-page h3 {
+  margin-bottom: 8px;
+}
+
+.privacy-page ul {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-panel {
+    position: static;
+  }
+
+  .summary-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header {
+    padding: 0 12px;
+  }
+
+  .user-menu {
+    gap: 8px;
+  }
+}
