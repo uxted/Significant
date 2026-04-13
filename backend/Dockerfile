@@ -12,15 +12,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install dependencies (cached unless requirements change)
-COPY backend/requirements.txt .
+# Copy ML requirements
+COPY ../ml/requirements.txt /app/ml/requirements.txt
+
+# Copy backend requirements and install
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code
-COPY backend/ ./
+# Copy ALL backend code into the image
+COPY . .
 
 # Create required directories
-RUN mkdir -p /app/staticfiles /app/media /app/logs /app/ml/models
+RUN mkdir -p /app/staticfiles /app/media /app/logs
 
 EXPOSE 8000
 

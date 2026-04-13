@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # =============================================
   # DATABASE — PostgreSQL
@@ -47,18 +45,17 @@ services:
   # =============================================
   web:
     build:
-      context: ./backend
-      dockerfile: ../Dockerfile.web
+      context: .
+      dockerfile: Dockerfile.web
     container_name: news_aggregator_web
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120"
     volumes:
-      - ./backend:/app
-      - ./ml/models:/app/ml/models
       - static_volume:/app/staticfiles
       - media_volume:/app/media
+      - logs_volume:/app/logs
     ports:
       - "8000:8000"
     env_file:
@@ -76,8 +73,8 @@ services:
   # =============================================
   worker:
     build:
-      context: ./backend
-      dockerfile: ../Dockerfile.web
+      context: .
+      dockerfile: Dockerfile.web
     container_name: news_aggregator_worker
     command: >
       celery -A config worker
@@ -85,8 +82,7 @@ services:
       --concurrency=2
       --prefetch-multiplier=1
     volumes:
-      - ./backend:/app
-      - ./ml/models:/app/ml/models
+      - logs_volume:/app/logs
     env_file:
       - .env
     depends_on:
@@ -101,12 +97,10 @@ services:
   # =============================================
   beat:
     build:
-      context: ./backend
-      dockerfile: ../Dockerfile.web
+      context: .
+      dockerfile: Dockerfile.web
     container_name: news_aggregator_beat
     command: celery -A config beat --loglevel=info
-    volumes:
-      - ./backend:/app
     env_file:
       - .env
     depends_on:
@@ -121,7 +115,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: ../Dockerfile.frontend
+      dockerfile: Dockerfile
     container_name: news_aggregator_frontend
     command: npm start
     volumes:
@@ -129,6 +123,10 @@ services:
       - frontend_node_modules:/app/node_modules
     ports:
       - "3000:3000"
+    environment:
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - PROXY=http://web:8000
     env_file:
       - .env
     depends_on:
@@ -144,8 +142,8 @@ services:
     container_name: news_aggregator_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - static_volume:/app/static
-      - media_volume:/app/media
+      - static_volume:/static
+      - media_volume:/media
     ports:
       - "80:80"
     depends_on:
@@ -162,6 +160,7 @@ volumes:
   redis_data:
   static_volume:
   media_volume:
+  logs_volume:
   frontend_node_modules:
 
 # =============================================

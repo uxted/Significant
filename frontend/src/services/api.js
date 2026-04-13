@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:8000",
+  baseURL: '',
   timeout: 30000,
 });
 
@@ -37,7 +37,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          `${api.defaults.baseURL}/api/auth/refresh/`,
+          "/api/auth/refresh/",
           { refresh: refreshToken }
         );
         const { access, refresh: newRefresh } = response.data;

@@ -1,0 +1,10 @@
+node_modules/
+build/
+.git/
+.github/
+.env
+*.log
+coverage/
+.nyc_output/
+playwright-report/
+test-results/

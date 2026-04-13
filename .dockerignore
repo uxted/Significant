@@ -1,0 +1,13 @@
+.env
+*.log
+logs/
+.git/
+.github/
+__pycache__/
+*.pyc
+node_modules/
+coverage/
+htmlcov/
+ml/models/*/saved_model.pb
+ml/models/*/variables/
+ml/data/datasets/*.csv

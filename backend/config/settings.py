@@ -16,7 +16,7 @@ SECRET_KEY = config("SECRET_KEY", default="django-insecure-change-me")
 
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,web,db,cache,frontend,nginx").split(",")
 
 # =============================================
 # APPLICATIONS
@@ -46,6 +46,18 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+# =============================================
+# AUTH
+# =============================================
+AUTH_USER_MODEL = "users.User"
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 8}},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
 
 # =============================================
 # MIDDLEWARE
@@ -113,18 +125,6 @@ CACHES = {
 }
 
 # =============================================
-# AUTH
-# =============================================
-AUTH_USER_MODEL = "users.User"
-
-AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 8}},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-]
-
-# =============================================
 # REST FRAMEWORK
 # =============================================
 REST_FRAMEWORK = {
@@ -178,24 +178,18 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Europe/Moscow"
 
-# Celery Beat schedule
 CELERY_BEAT_SCHEDULE = {
     "parse-rss-sources": {
         "task": "apps.parsers.tasks.parse_rss_sources",
-        "schedule": 300.0,  # every 5 minutes
+        "schedule": 300.0,
     },
     "parse-web-sources": {
         "task": "apps.parsers.tasks.parse_web_sources",
-        "schedule": 600.0,  # every 10 minutes
+        "schedule": 600.0,
     },
     "cleanup-old-data": {
         "task": "apps.news.tasks.cleanup_old_data",
-        "schedule": 86400.0,  # daily at 03:00 (handled by cron)
-        "options": {"expires": 3600},
-    },
-    "backup-database": {
-        "task": "apps.news.tasks.backup_database",
-        "schedule": 86400.0,  # daily at 04:00
+        "schedule": 86400.0,
         "options": {"expires": 3600},
     },
 }
@@ -203,7 +197,7 @@ CELERY_BEAT_SCHEDULE = {
 # =============================================
 # ML MODEL
 # =============================================
-ML_MODEL_PATH = config("ML_MODEL_PATH", default="/app/models/rubert_finetuned_v1")
+ML_MODEL_PATH = config("ML_MODEL_PATH", default="/app/ml/models/rubert_finetuned_v1")
 
 # =============================================
 # INTERNATIONALIZATION
@@ -237,65 +231,20 @@ LOGGING = {
             "format": "{levelname} {asctime} {name} {message}",
             "style": "{",
         },
-        "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "fmt": "{levelname} {asctime} {name} {message}",
-            "style": "{",
-        },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
-        "file_auth": {
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs" / "auth.log",
-            "formatter": "verbose",
-            "level": "INFO",
-        },
-        "file_parser": {
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs" / "parser.log",
-            "formatter": "verbose",
-            "level": "INFO",
-        },
-        "file_ml": {
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs" / "ml.log",
-            "formatter": "verbose",
-            "level": "INFO",
-        },
-        "file_audit": {
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs" / "audit.log",
-            "formatter": "verbose",
-            "level": "INFO",
-        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "INFO",
-            "propagate": True,
-        },
-        "auth": {
-            "handlers": ["console", "file_auth"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "parser": {
-            "handlers": ["console", "file_parser"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "ml.classifier": {
-            "handlers": ["console", "file_ml"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "audit": {
-            "handlers": ["console", "file_audit"],
             "level": "INFO",
             "propagate": False,
         },
@@ -303,7 +252,7 @@ LOGGING = {
 }
 
 # =============================================
-# SECURITY (for production, DEBUG=False)
+# SECURITY
 # =============================================
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
