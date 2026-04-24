@@ -6,14 +6,19 @@
       "title": "Банк России сохранил ключевую ставку на уровне 21%",
       "summary": "Центральный банк принял решение сохранить ключевую ставку без изменений",
       "full_text": "Совет директоров Банка России 25 октября 2024 года принял решение сохранить ключевую ставку на уровне 21% годовых. Инфляция складывается выше прогноза Банка России. В июле-сентябре 2024 года годовая инфляция повысилась до 8,5%.",
-      "source_id": 1,
-      "category_id": 1,
+      "source": 1,
+      "category": 1,
       "is_significant": true,
       "significance_level": "HIGH",
       "confidence_score": 0.95,
       "needs_moderation": false,
+      "is_unconfirmed": false,
+      "original_url": "https://cbr.ru/press/event/12345",
       "published_at": "2024-10-25T10:00:00Z",
-      "url": "https://cbr.ru/press/event/12345"
+      "title_hash": "abc123def456",
+      "assets": ["CBR", "RUB"],
+      "created_at": "2024-10-25T10:00:00Z",
+      "updated_at": "2024-10-25T10:00:00Z"
     }
   },
   {
@@ -23,14 +28,19 @@
       "title": "Газпром отчитался о прибыли за 3 квартал",
       "summary": "Корпоративная отчетность превзошла ожидания аналитиков",
       "full_text": "ПАО Газпром опубликовало финансовую отчетность за третий квартал 2024 года. Чистая прибыль составила 1.2 трлн рублей, что превышает консенсус-прогноз аналитиков.",
-      "source_id": 8,
-      "category_id": 2,
+      "source": 8,
+      "category": 2,
       "is_significant": true,
       "significance_level": "MEDIUM",
       "confidence_score": 0.87,
       "needs_moderation": false,
+      "is_unconfirmed": false,
+      "original_url": "https://gazprom.com/news/q3-2024",
       "published_at": "2024-10-24T14:30:00Z",
-      "url": "https://gazprom.com/news/q3-2024"
+      "title_hash": "def456ghi789",
+      "assets": ["GAZP"],
+      "created_at": "2024-10-24T14:30:00Z",
+      "updated_at": "2024-10-24T14:30:00Z"
     }
   },
   {
@@ -40,14 +50,19 @@
       "title": "Минфин анонсировал новые меры поддержки IT-сектора",
       "summary": "Ведомство подготовило пакет льгот для технологических компаний",
       "full_text": "Министерство финансов Российской Федерации объявило о подготовке новых мер государственной поддержки компаний IT-отрасли. Планируется расширение льгот по налогу на прибыль и страховым взносам.",
-      "source_id": 13,
-      "category_id": 3,
+      "source": 13,
+      "category": 3,
       "is_significant": true,
       "significance_level": "HIGH",
       "confidence_score": 0.92,
       "needs_moderation": false,
+      "is_unconfirmed": false,
+      "original_url": "https://minfin.gov.ru/press/it-support",
       "published_at": "2024-10-23T09:15:00Z",
-      "url": "https://minfin.gov.ru/press/it-support"
+      "title_hash": "ghi789jkl012",
+      "assets": ["IT", "TECH"],
+      "created_at": "2024-10-23T09:15:00Z",
+      "updated_at": "2024-10-23T09:15:00Z"
     }
   },
   {
@@ -57,14 +72,19 @@
       "title": "Московская биржа запустила новый индекс",
       "summary": "Индекс отражает динамику акций технологических компаний",
       "full_text": "Московская биржа сообщила о запуске нового отраслевого индекса, который будет отслеживать_performance акций российских технологических компаний. Базовое значение установлено на уровне 1000 пунктов.",
-      "source_id": 14,
-      "category_id": 4,
+      "source": 14,
+      "category": 4,
       "is_significant": false,
       "significance_level": "LOW",
       "confidence_score": 0.65,
       "needs_moderation": false,
+      "is_unconfirmed": false,
+      "original_url": "https://moex.com/news/new-index",
       "published_at": "2024-10-22T11:00:00Z",
-      "url": "https://moex.com/news/new-index"
+      "title_hash": "jkl012mno345",
+      "assets": ["MOEX", "INDEX"],
+      "created_at": "2024-10-22T11:00:00Z",
+      "updated_at": "2024-10-22T11:00:00Z"
     }
   },
   {
@@ -74,14 +94,19 @@
       "title": "Росстат: инфляция в сентябре составила 0.8%",
       "summary": "Месячная инфляция оказалась выше прогноза экономистов",
       "full_text": "Федеральная служба государственной статистики опубликовала данные об инфляции за сентябрь 2024 года. Потребительские цены выросли на 0.8% по сравнению с августом.",
-      "source_id": 15,
-      "category_id": 1,
+      "source": 15,
+      "category": 1,
       "is_significant": true,
       "significance_level": "MEDIUM",
       "confidence_score": 0.89,
       "needs_moderation": false,
+      "is_unconfirmed": false,
+      "original_url": "https://rosstat.gov.ru/inflation/sept2024",
       "published_at": "2024-10-21T08:00:00Z",
-      "url": "https://rosstat.gov.ru/inflation/sept2024"
+      "title_hash": "mno345pqr678",
+      "assets": ["CPI", "RUB"],
+      "created_at": "2024-10-21T08:00:00Z",
+      "updated_at": "2024-10-21T08:00:00Z"
     }
   }
 ]
