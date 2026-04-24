@@ -1,29 +1,5 @@
-# =============================================
-# SECRETS
-# =============================================
-.env
-.env.local
-.env.production
-*.key
-*.pem
-
-# =============================================
-# DATABASE
-# =============================================
-db.sqlite3
-*.sql
-*.dump
-
-# =============================================
-# LOGS
-# =============================================
-*.log
-logs/
-*.log.*
-
-# =============================================
-# PYTHON
-# =============================================
+```
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -44,66 +20,28 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
 
-# =============================================
-# NODE
-# =============================================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm
-.yarn-integrity
+# Environment
+.env
+.env.local
+.env.*
 
-# =============================================
-# ML MODELS (large files)
-# =============================================
-ml/models/*/saved_model.pb
-ml/models/*/variables/
-ml/models/*.h5
-ml/models/*.pb
-!ml/models/**/.gitkeep
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
 
-# =============================================
 # IDE
-# =============================================
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
-.project
-.settings/
+*.tmp
 
-# =============================================
 # OS
-# =============================================
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# =============================================
-# DOCKER (local overrides)
-# =============================================
-docker-compose.override.yml
-
-# =============================================
-# TESTS & COVERAGE
-# =============================================
-coverage/
-htmlcov/
-.coverage
-.coverage.*
-.nyc_output/
-playwright-report/
-test-results/
-.locustfile.conf
-
-# =============================================
-# BUILD OUTPUTS
-# =============================================
-frontend/build/
-backend/staticfiles/
+```
