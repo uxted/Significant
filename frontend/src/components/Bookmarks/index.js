@@ -12,8 +12,8 @@ export default function Bookmarks() {
       try {
         const response = await api.get("/api/user/bookmarks/");
         setBookmarks(response.data);
-      } catch (err) {
-        console.error("Failed to fetch bookmarks:", err);
+      } catch {
+        console.error("Failed to fetch bookmarks");
       } finally {
         setLoading(false);
       }
@@ -26,23 +26,30 @@ export default function Bookmarks() {
     setBookmarks((prev) => prev.filter((b) => b.id !== articleId));
   };
 
-  if (loading) return <div className="loading-spinner">Загрузка...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-sm text-muted-foreground">Загрузка...</p>
+      </div>
+    );
 
   return (
-    <div className="bookmarks-page">
-      <h2>Закладки</h2>
+    <div className="mx-auto max-w-4xl space-y-6">
+      <h2 className="text-2xl font-bold tracking-tight">Закладки</h2>
       {bookmarks.length === 0 ? (
-        <div className="empty-state">
-          <p>У вас пока нет закладок.</p>
-          <Link to="/">Перейти к ленте</Link>
+        <div className="flex flex-col items-center justify-center rounded-lg border bg-card p-12 text-center shadow-sm">
+          <p className="text-lg font-medium">У вас пока нет закладок.</p>
+          <Link to="/" className="mt-4 text-primary underline-offset-4 hover:underline">
+            Перейти к ленте
+          </Link>
         </div>
       ) : (
-        <div className="bookmarks-list">
+        <div className="space-y-4">
           {bookmarks.map((article) => (
-            <div key={article.id} className="bookmark-item">
+            <div key={article.id} className="space-y-2">
               <NewsCard news={article} />
               <button
-                className="btn-remove-bookmark"
+                className="text-sm text-muted-foreground hover:text-destructive transition-colors"
                 onClick={() => handleRemove(article.id)}
               >
                 Удалить из закладок
