@@ -1,0 +1,167 @@
+[
+  {
+    "model": "news.newssource",
+    "pk": 1,
+    "fields": {
+      "name": "Банк России",
+      "url": "https://cbr.ru",
+      "tier": 1,
+      "feed_url": "https://cbr.ru/press/rss/",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 2,
+    "fields": {
+      "name": "ПРАЙМ",
+      "url": "https://prime.ru",
+      "tier": 2,
+      "feed_url": "https://prime.ru/news/",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 3,
+    "fields": {
+      "name": "РБК",
+      "url": "https://rbk.ru",
+      "tier": 3,
+      "feed_url": "https://www.rbc.ru/rbcfnews/rss54",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 4,
+    "fields": {
+      "name": "Интерфакс",
+      "url": "https://interfax.ru",
+      "tier": 2,
+      "feed_url": "https://www.interfax.ru/rss/",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 5,
+    "fields": {
+      "name": "Ведомости",
+      "url": "https://vedomosti.ru",
+      "tier": 3,
+      "feed_url": "https://www.vedomosti.ru/rss",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 6,
+    "fields": {
+      "name": "Коммерсантъ",
+      "url": "https://kommersant.ru",
+      "tier": 3,
+      "feed_url": "https://www.kommersant.ru/rss",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 7,
+    "fields": {
+      "name": "ТАСС",
+      "url": "https://tass.ru",
+      "tier": 2,
+      "feed_url": "https://tass.ru/rss/v2.xml",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 8,
+    "fields": {
+      "name": "Газпром",
+      "url": "https://gazprom.com",
+      "tier": 4,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 9,
+    "fields": {
+      "name": "Лукойл",
+      "url": "https://lukoil.ru",
+      "tier": 4,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 10,
+    "fields": {
+      "name": "Сбербанк",
+      "url": "https://sberbank.com",
+      "tier": 4,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 11,
+    "fields": {
+      "name": "Bloomberg Россия",
+      "url": "https://bloomberg.com",
+      "tier": 3,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 12,
+    "fields": {
+      "name": "Reuters Россия",
+      "url": "https://reuters.com",
+      "tier": 3,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 13,
+    "fields": {
+      "name": "Минфин России",
+      "url": "https://minfin.gov.ru",
+      "tier": 1,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 14,
+    "fields": {
+      "name": "Московская Биржа",
+      "url": "https://moex.com",
+      "tier": 1,
+      "feed_url": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "news.newssource",
+    "pk": 15,
+    "fields": {
+      "name": "Росстат",
+      "url": "https://rosstat.gov.ru",
+      "tier": 1,
+      "feed_url": "",
+      "is_active": true
+    }
+  }
+]

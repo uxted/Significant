@@ -1,0 +1,42 @@
+[
+  {
+    "model": "news.newscategory",
+    "pk": 1,
+    "fields": {
+      "code": "macro",
+      "name": "Макроэкономика"
+    }
+  },
+  {
+    "model": "news.newscategory",
+    "pk": 2,
+    "fields": {
+      "code": "corporate",
+      "name": "Корпоративные события"
+    }
+  },
+  {
+    "model": "news.newscategory",
+    "pk": 3,
+    "fields": {
+      "code": "regulatory",
+      "name": "Регуляторные решения"
+    }
+  },
+  {
+    "model": "news.newscategory",
+    "pk": 4,
+    "fields": {
+      "code": "market",
+      "name": "Рыночные события"
+    }
+  },
+  {
+    "model": "news.newscategory",
+    "pk": 5,
+    "fields": {
+      "code": "geopolitics",
+      "name": "Геополитика"
+    }
+  }
+]

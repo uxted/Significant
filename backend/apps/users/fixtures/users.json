@@ -1,0 +1,32 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$dummy_salt$dummy_hash=admin123",
+      "last_login": null,
+      "is_superuser": true,
+      "email": "admin@example.com",
+      "role": "admin",
+      "agreed_to_pd": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$dummy_salt$dummy_hash=user123",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "user@example.com",
+      "role": "user",
+      "agreed_to_pd": true,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  }
+]
