@@ -3,40 +3,40 @@
     "model": "news.newscategory",
     "pk": 1,
     "fields": {
-      "code": "macro",
-      "name": "Макроэкономика"
+      "name": "Макроэкономика",
+      "code": "MACRO"
     }
   },
   {
     "model": "news.newscategory",
     "pk": 2,
     "fields": {
-      "code": "corporate",
-      "name": "Корпоративные события"
+      "name": "Банки и финансы",
+      "code": "BANKS"
     }
   },
   {
     "model": "news.newscategory",
     "pk": 3,
     "fields": {
-      "code": "regulatory",
-      "name": "Регуляторные решения"
+      "name": "Нефтегазовый сектор",
+      "code": "OIL_GAS"
     }
   },
   {
     "model": "news.newscategory",
     "pk": 4,
     "fields": {
-      "code": "market",
-      "name": "Рыночные события"
+      "name": "IT и Телеком",
+      "code": "IT_TELECOM"
     }
   },
   {
     "model": "news.newscategory",
     "pk": 5,
     "fields": {
-      "code": "geopolitics",
-      "name": "Геополитика"
+      "name": "Промышленность",
+      "code": "INDUSTRY"
     }
   }
 ]

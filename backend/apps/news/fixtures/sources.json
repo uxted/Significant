@@ -3,210 +3,180 @@
     "model": "news.newssource",
     "pk": 1,
     "fields": {
-      "name": "Банк России",
-      "url": "https://cbr.ru",
+      "name": "Центральный банк РФ",
+      "url": "https://www.cbr.ru/rss/",
       "tier": 1,
-      "feed_url": "https://cbr.ru/press/rss/",
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 2,
     "fields": {
-      "name": "ПРАЙМ",
-      "url": "https://prime.ru",
-      "tier": 2,
-      "feed_url": "https://prime.ru/news/",
+      "name": "Правительство РФ",
+      "url": "https://government.ru/rss/all/",
+      "tier": 1,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 3,
     "fields": {
-      "name": "РБК",
-      "url": "https://rbk.ru",
-      "tier": 3,
-      "feed_url": "https://www.rbc.ru/rbcfnews/rss54",
+      "name": "Минэкономразвития",
+      "url": "https://economy.gov.ru/rss/",
+      "tier": 1,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 4,
     "fields": {
-      "name": "Интерфакс",
-      "url": "https://interfax.ru",
+      "name": "ТАСС",
+      "url": "https://tass.ru/rss/v2.xml",
       "tier": 2,
-      "feed_url": "https://www.interfax.ru/rss/",
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 5,
     "fields": {
-      "name": "Ведомости",
-      "url": "https://vedomosti.ru",
-      "tier": 3,
-      "feed_url": "https://www.vedomosti.ru/rss",
+      "name": "РИА Новости",
+      "url": "https://ria.ru/export/rss2/economy/index.xml",
+      "tier": 2,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 6,
     "fields": {
-      "name": "Коммерсантъ",
-      "url": "https://kommersant.ru",
-      "tier": 3,
-      "feed_url": "https://www.kommersant.ru/rss",
+      "name": "Интерфакс",
+      "url": "https://www.interfax.ru/rss.asp",
+      "tier": 2,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 7,
     "fields": {
-      "name": "ТАСС",
-      "url": "https://tass.ru",
-      "tier": 2,
-      "feed_url": "https://tass.ru/rss/v2.xml",
+      "name": "РБК",
+      "url": "https://rbc.ru/news/rss/news.xml",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 8,
     "fields": {
-      "name": "Газпром",
-      "url": "https://gazprom.com",
-      "tier": 4,
-      "feed_url": "",
+      "name": "Коммерсантъ",
+      "url": "https://www.kommersant.ru/RSS/news_day.xml",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 9,
     "fields": {
-      "name": "Лукойл",
-      "url": "https://lukoil.ru",
-      "tier": 4,
-      "feed_url": "",
+      "name": "Ведомости",
+      "url": "https://www.vedomosti.ru/rss/news.xml",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 10,
     "fields": {
-      "name": "Сбербанк",
-      "url": "https://sberbank.com",
-      "tier": 4,
-      "feed_url": "",
+      "name": "Forbes Россия",
+      "url": "https://www.forbes.ru/newsfeed.xml",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 11,
     "fields": {
-      "name": "Bloomberg Россия",
-      "url": "https://bloomberg.com",
+      "name": "Эксперт",
+      "url": "https://expert.ru/feed/",
       "tier": 3,
-      "feed_url": "",
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 12,
     "fields": {
-      "name": "Reuters Россия",
-      "url": "https://reuters.com",
+      "name": "Газета.Ru (Бизнес)",
+      "url": "https://www.gazeta.ru/rss/business/",
       "tier": 3,
-      "feed_url": "",
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 13,
     "fields": {
-      "name": "Минфин России",
-      "url": "https://minfin.gov.ru",
-      "tier": 1,
-      "feed_url": "",
+      "name": "Лента.ру (Экономика)",
+      "url": "https://lenta.ru/rss/economy",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 14,
     "fields": {
-      "name": "Московская Биржа",
-      "url": "https://moex.com",
-      "tier": 1,
-      "feed_url": "",
+      "name": "Банки.ру",
+      "url": "https://www.banki.ru/news/feed/",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   },
   {
     "model": "news.newssource",
     "pk": 15,
     "fields": {
-      "name": "Росстат",
-      "url": "https://rosstat.gov.ru",
-      "tier": 1,
-      "feed_url": "",
+      "name": "Финмаркет",
+      "url": "https://www.finmarket.ru/rss/",
+      "tier": 3,
       "is_active": true,
-      "last_parsed": null,
-      "created_at": "2024-10-01T00:00:00Z",
-      "updated_at": "2024-10-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
     }
   }
 ]

@@ -2,148 +2,298 @@
 
 import logging
 import time
+import json
+from datetime import timedelta
 from celery import shared_task
 from django.utils import timezone
 from feedparser import parse as parse_feed
 from bs4 import BeautifulSoup
-import requests
-import hashlib
 
 from apps.news.models import NewsArticle, NewsSource, NewsCategory
 from apps.ml_service.classifier import classify_article, assign_significance_level
+from apps.parsers.utils import (
+    fetch_url,
+    clean_html,
+    calculate_title_hash,
+)
+from apps.parsers.filters import filter_news
 
 logger = logging.getLogger("parser")
 
 
 @shared_task(bind=True, max_retries=3)
 def parse_rss_sources(self):
-    """Parse all active RSS sources."""
+    """Parse all active RSS sources with enhanced logging and error handling."""
+    start_time = time.time()
     sources = NewsSource.objects.filter(is_active=True).exclude(feed_url="")
     total_parsed = 0
+    total_filtered = 0
+    total_errors = 0
+
+    logger.info(json.dumps({
+        "event": "rss_parsing_started",
+        "sources_count": sources.count(),
+        "timestamp": timezone.now().isoformat()
+    }))
 
     for source in sources:
         try:
-            count = _parse_single_rss(source)
-            total_parsed += count
+            parsed_count, filtered_count = _parse_single_rss(source)
+            total_parsed += parsed_count
+            total_filtered += filtered_count
             source.last_parsed = timezone.now()
             source.save(update_fields=["last_parsed"])
-        except Exception as exc:
-            logger.error(f"Error parsing RSS source {source.name}: {exc}")
-            self.retry(exc=exc, countdown=300)
 
-    logger.info(f"RSS parsing completed: {total_parsed} articles parsed")
-    return total_parsed
+            logger.info(json.dumps({
+                "event": "rss_source_parsed",
+                "source_id": source.id,
+                "source_name": source.name,
+                "source_tier": source.tier,
+                "articles_parsed": parsed_count,
+                "articles_filtered": filtered_count,
+                "timestamp": timezone.now().isoformat()
+            }))
+        except Exception as exc:
+            total_errors += 1
+            logger.error(json.dumps({
+                "event": "rss_source_error",
+                "source_id": source.id,
+                "source_name": source.name,
+                "error": str(exc),
+                "timestamp": timezone.now().isoformat()
+            }))
+            # Не делаем retry для отдельных источников, продолжаем дальше
+            continue
+
+    duration = time.time() - start_time
+    logger.info(json.dumps({
+        "event": "rss_parsing_completed",
+        "total_articles_parsed": total_parsed,
+        "total_articles_filtered": total_filtered,
+        "total_errors": total_errors,
+        "duration_seconds": round(duration, 2),
+        "timestamp": timezone.now().isoformat()
+    }))
+
+    return {"parsed": total_parsed, "filtered": total_filtered, "errors": total_errors}
 
 
 @shared_task(bind=True, max_retries=3)
 def parse_web_sources(self):
-    """Parse web sources using BeautifulSoup."""
+    """Parse web sources using BeautifulSoup with enhanced logging."""
+    start_time = time.time()
     sources = NewsSource.objects.filter(is_active=True).filter(feed_url="")
     total_parsed = 0
+    total_filtered = 0
+    total_errors = 0
+
+    logger.info(json.dumps({
+        "event": "web_parsing_started",
+        "sources_count": sources.count(),
+        "timestamp": timezone.now().isoformat()
+    }))
 
     for source in sources:
         try:
-            count = _parse_single_web(source)
-            total_parsed += count
+            parsed_count, filtered_count = _parse_single_web(source)
+            total_parsed += parsed_count
+            total_filtered += filtered_count
             source.last_parsed = timezone.now()
             source.save(update_fields=["last_parsed"])
+
+            logger.info(json.dumps({
+                "event": "web_source_parsed",
+                "source_id": source.id,
+                "source_name": source.name,
+                "source_tier": source.tier,
+                "articles_parsed": parsed_count,
+                "articles_filtered": filtered_count,
+                "timestamp": timezone.now().isoformat()
+            }))
         except Exception as exc:
-            logger.error(f"Error parsing web source {source.name}: {exc}")
-            self.retry(exc=exc, countdown=600)
+            total_errors += 1
+            logger.error(json.dumps({
+                "event": "web_source_error",
+                "source_id": source.id,
+                "source_name": source.name,
+                "error": str(exc),
+                "timestamp": timezone.now().isoformat()
+            }))
+            continue
 
-    logger.info(f"Web parsing completed: {total_parsed} articles parsed")
-    return total_parsed
+    duration = time.time() - start_time
+    logger.info(json.dumps({
+        "event": "web_parsing_completed",
+        "total_articles_parsed": total_parsed,
+        "total_articles_filtered": total_filtered,
+        "total_errors": total_errors,
+        "duration_seconds": round(duration, 2),
+        "timestamp": timezone.now().isoformat()
+    }))
+
+    return {"parsed": total_parsed, "filtered": total_filtered, "errors": total_errors}
 
 
-def _parse_single_rss(source: NewsSource) -> int:
-    """Parse a single RSS feed."""
+def _parse_single_rss(source: NewsSource) -> tuple:
+    """Parse a single RSS feed with enhanced deduplication and filtering."""
     start_time = time.time()
-    feed = parse_feed(source.feed_url)
+
+    # Загружаем RSS ленту с таймаутом
+    try:
+        response = fetch_url(source.feed_url, timeout=10)
+        if not response:
+            logger.warning(f"Failed to fetch RSS feed for {source.name}")
+            return 0, 0
+        feed = parse_feed(response)
+    except Exception as e:
+        logger.error(f"Error parsing RSS feed for {source.name}: {e}")
+        return 0, 0
+
     count = 0
+    filtered_count = 0
 
     for entry in feed.entries:
         title = entry.get("title", "")
         if not title:
             continue
 
-        # Deduplication
-        title_hash = hashlib.sha256(title.encode("utf-8")).hexdigest()
+        # Извлекаем описание и контент
+        summary = entry.get("summary", "") or entry.get("description", "")
+        full_content = entry.get("content", [{}])[0].get("value", "") if hasattr(entry, "content") else ""
+
+        # Вычисляем хеш заголовка для дедупликации
+        title_hash = calculate_title_hash(title)
+
+        # Проверяем на дубликат (за последние 24 часа)
         if _is_duplicate(title_hash):
+            logger.debug(f"Duplicate article detected: {title[:50]}...")
+            filtered_count += 1
             continue
 
-        # Create article
+        # Применяем rule-based фильтрацию
+        filter_result = filter_news(
+            title=title,
+            description=summary,
+            content=full_content,
+            source_tier=source.tier
+        )
+
+        if not filter_result['passed']:
+            logger.debug(f"Article filtered out: {title[:50]}... Reason: {filter_result['reason']}")
+            filtered_count += 1
+            continue
+
+        # Создаем статью
         article = _create_article(
             source=source,
             title=title,
-            summary=entry.get("summary", ""),
-            full_text=entry.get("description", ""),
+            summary=summary,
+            full_text=full_content,
             original_url=entry.get("link", ""),
             published_at=_parse_published_date(entry),
             title_hash=title_hash,
+            filter_result=filter_result,
         )
         if article:
             count += 1
 
     duration = time.time() - start_time
-    logger.info(
-        f"RSS source '{source.name}': {count} articles in {duration:.2f}s"
-    )
-    return count
+    logger.info(json.dumps({
+        "event": "rss_source_parsed_detail",
+        "source_name": source.name,
+        "articles_parsed": count,
+        "articles_filtered": filtered_count,
+        "duration_seconds": round(duration, 2)
+    }))
+    return count, filtered_count
 
 
-def _parse_single_web(source: NewsSource) -> int:
-    """Parse a single web page."""
+def _parse_single_web(source: NewsSource) -> tuple:
+    """Parse a single web page with enhanced HTML cleaning."""
     start_time = time.time()
-    response = requests.get(source.url, timeout=30)
-    response.raise_for_status()
 
-    soup = BeautifulSoup(response.text, "lxml")
+    # Загружаем страницу с таймаутом и ротацией User-Agent
+    html_content = fetch_url(source.url, timeout=10)
+    if not html_content:
+        logger.warning(f"Failed to fetch web page for {source.name}")
+        return 0, 0
+
+    # Очищаем HTML от мусора
+    cleaned_text = clean_html(html_content)
+
     count = 0
+    filtered_count = 0
 
-    # Generic parsing logic — customize per source
-    articles = soup.find_all("article") or soup.find_all(
-        "div", class_=["news-item", "article", "post"]
-    )
+    # Простая эвристика для выделения отдельных новостей из страницы
+    # В реальном проекте нужно парсить конкретную структуру каждого сайта
+    soup = BeautifulSoup(html_content, 'html.parser')
 
-    for article_tag in articles:
-        title_tag = article_tag.find("h1") or article_tag.find("h2") or article_tag.find("a")
+    # Ищем заголовки новостей
+    articles = soup.find_all(["article", "div"], class_=lambda x: x and any(word in str(x) for word in ["news", "article", "post", "item"]))
+    if not articles:
+        # Если не нашли структурированные элементы, пробуем найти все заголовки
+        articles = soup.find_all(["h1", "h2", "h3"])
+
+    for article_tag in articles[:20]:  # Ограничиваем количество обрабатываемых элементов
+        title_tag = article_tag.find(["h1", "h2", "h3", "a"]) or article_tag
         if not title_tag:
             continue
 
-        title = title_tag.get_text(strip=True)
-        title_hash = hashlib.sha256(title.encode("utf-8")).hexdigest()
-
-        if _is_duplicate(title_hash):
+        title = title_tag.get_text(strip=True)[:200]
+        if not title or len(title) < 10:
             continue
 
+        title_hash = calculate_title_hash(title)
+
+        if _is_duplicate(title_hash):
+            filtered_count += 1
+            continue
+
+        # Пробуем найти ссылку и описание
         link_tag = article_tag.find("a", href=True)
-        summary = ""
         summary_tag = article_tag.find("p")
-        if summary_tag:
-            summary = summary_tag.get_text(strip=True)[:500]
+
+        summary = summary_tag.get_text(strip=True)[:500] if summary_tag else ""
+        original_url = link_tag["href"] if link_tag and link_tag.has_attr("href") else source.url
+
+        # Применяем фильтрацию
+        filter_result = filter_news(
+            title=title,
+            description=summary,
+            content=cleaned_text[:1000],
+            source_tier=source.tier
+        )
+
+        if not filter_result['passed']:
+            filtered_count += 1
+            continue
 
         article = _create_article(
             source=source,
             title=title,
             summary=summary,
-            original_url=link_tag["href"] if link_tag else source.url,
+            full_text=cleaned_text[:2000],
+            original_url=original_url,
             published_at=timezone.now(),
             title_hash=title_hash,
+            filter_result=filter_result,
         )
         if article:
             count += 1
 
     duration = time.time() - start_time
-    logger.info(
-        f"Web source '{source.name}': {count} articles in {duration:.2f}s"
-    )
-    return count
+    logger.info(json.dumps({
+        "event": "web_source_parsed_detail",
+        "source_name": source.name,
+        "articles_parsed": count,
+        "articles_filtered": filtered_count,
+        "duration_seconds": round(duration, 2)
+    }))
+    return count, filtered_count
 
 
 def _is_duplicate(title_hash: str) -> bool:
     """Check if article with same title hash exists in last 24 hours."""
-    from datetime import timedelta
-
     cutoff = timezone.now() - timedelta(hours=24)
     return NewsArticle.objects.filter(
         title_hash=title_hash,
@@ -151,57 +301,52 @@ def _is_duplicate(title_hash: str) -> bool:
     ).exists()
 
 
-def _create_article(source, title, summary="", full_text="",
-                    original_url="", published_at=None, title_hash="") -> NewsArticle:
-    """Create article with ML classification."""
+def _create_article(
+    source,
+    title,
+    summary="",
+    full_text="",
+    original_url="",
+    published_at=None,
+    title_hash="",
+    filter_result=None,
+):
+    """Create article with ML classification and enhanced filtering."""
     from datetime import datetime
 
     if published_at is None:
         published_at = timezone.now()
 
-    # Rule-based filter
-    if _rule_based_filter(title, source):
-        # ML classification
-        is_significant, confidence = classify_article(title, summary)
+    # ML классификация (используем fallback TF-IDF + Logistic Regression)
+    is_significant, confidence = classify_article(title, summary)
 
-        if not is_significant:
-            # Store but mark as not significant
-            significance_level = "LOW"
-        else:
-            significance_level = assign_significance_level(
-                confidence, source.tier, title, summary
-            )
-
-        article = NewsArticle.objects.create(
-            title=title,
-            summary=summary[:1000],
-            full_text=full_text[:5000],
-            source=source,
-            category=_detect_category(title, summary),
-            is_significant=is_significant,
-            significance_level=significance_level,
-            confidence_score=confidence,
-            original_url=original_url[:1000],
-            published_at=published_at,
-            title_hash=title_hash,
-            needs_moderation=(0.4 <= confidence <= 0.6),
+    if not is_significant:
+        significance_level = "LOW"
+    else:
+        significance_level = assign_significance_level(
+            confidence, source.tier, title, summary
         )
-        return article
 
-    return None
+    # Определяем категорию
+    category = _detect_category(title, summary)
 
-
-def _rule_based_filter(title: str, source: NewsSource) -> bool:
-    """Rule-based filter to skip obviously non-significant news."""
-    skip_keywords = ["спорт", "развлечения", "погода", "афиша", "рецепты"]
-    title_lower = title.lower()
-
-    # Skip if source tier 3+ and title contains skip words
-    if source.tier >= 3:
-        for keyword in skip_keywords:
-            if keyword in title_lower:
-                return False
-    return True
+    # Создаем статью
+    article = NewsArticle.objects.create(
+        title=title[:200],  # Ограничиваем длину заголовка
+        summary=summary[:1000],
+        full_text=full_text[:5000],
+        source=source,
+        category=category,
+        is_significant=is_significant,
+        significance_level=significance_level,
+        confidence_score=confidence,
+        original_url=original_url[:1000],
+        published_at=published_at,
+        title_hash=title_hash,
+        needs_moderation=(0.4 <= confidence <= 0.6),
+        filter_data=filter_result or {},  # Сохраняем результаты фильтрации
+    )
+    return article
 
 
 def _detect_category(title: str, summary: str) -> NewsCategory:
