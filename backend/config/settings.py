@@ -104,12 +104,20 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME", default="news_aggregator"),
-        "USER": config("DB_USER", default="postgres"),
-        "PASSWORD": config("DB_PASSWORD", default="postgres"),
+        "NAME": config("POSTGRES_DB", default="news_aggregator"),
+        "USER": config("POSTGRES_USER", default="postgres"),
+        "PASSWORD": config("POSTGRES_PASSWORD", default="admin"),
         "HOST": config("DB_HOST", default="db"),
         "PORT": config("DB_PORT", default="5432"),
     }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": config("DB_NAME", default="news_aggregator"),
+    #     "USER": config("DB_USER", default="postgres"),
+    #     "PASSWORD": config("DB_PASSWORD", default="admin"),
+    #     "HOST": config("DB_HOST", default="db"),
+    #     "PORT": config("DB_PORT", default="5432"),
+    # }
 }
 
 # =============================================
