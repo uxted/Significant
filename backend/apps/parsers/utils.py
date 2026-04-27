@@ -23,7 +23,7 @@ def get_random_user_agent() -> str:
     """Возвращает случайный User-Agent."""
     return random.choice(USER_AGENTS)
 
-def fetch_url(url: str, timeout: int = 10) -> Optional[str]:
+def fetch_url(url: str, timeout: int = 30) -> Optional[str]:
     """
     Выполняет HTTP GET запрос с ротацией User-Agent и таймаутом.
     Возвращает содержимое ответа или None при ошибке.

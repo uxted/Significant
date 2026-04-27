@@ -8,9 +8,9 @@ services:
       - .env
     container_name: news_aggregator_db
     environment:
-      POSTGRES_DB: ${DB_NAME:-news_aggregator}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-news_aggregator}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql

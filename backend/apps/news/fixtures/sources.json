@@ -4,9 +4,11 @@
     "pk": 1,
     "fields": {
       "name": "Центральный банк РФ",
-      "url": "https://www.cbr.ru/rss/",
+      "url": "https://www.cbr.ru",
       "tier": 1,
+      "feed_url": "http://www.cbr.ru/rss/RssPress",
       "is_active": true,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -16,9 +18,11 @@
     "pk": 2,
     "fields": {
       "name": "Правительство РФ",
-      "url": "https://government.ru/rss/all/",
+      "url": "https://government.ru",
       "tier": 1,
+      "feed_url": "http://government.ru/all/rss/",
       "is_active": true,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -28,9 +32,11 @@
     "pk": 3,
     "fields": {
       "name": "Минэкономразвития",
-      "url": "https://economy.gov.ru/rss/",
+      "url": "https://economy.gov.ru",
       "tier": 1,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -40,9 +46,11 @@
     "pk": 4,
     "fields": {
       "name": "ТАСС",
-      "url": "https://tass.ru/rss/v2.xml",
+      "url": "https://tass.ru",
       "tier": 2,
+      "feed_url": "https://tass.ru/rss/v2.xml",
       "is_active": true,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -52,9 +60,11 @@
     "pk": 5,
     "fields": {
       "name": "РИА Новости",
-      "url": "https://ria.ru/export/rss2/economy/index.xml",
+      "url": "https://ria.ru",
       "tier": 2,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -64,9 +74,11 @@
     "pk": 6,
     "fields": {
       "name": "Интерфакс",
-      "url": "https://www.interfax.ru/rss.asp",
+      "url": "https://www.interfax.ru",
       "tier": 2,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -76,9 +88,11 @@
     "pk": 7,
     "fields": {
       "name": "РБК",
-      "url": "https://rbc.ru/news/rss/news.xml",
+      "url": "https://www.rbc.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -88,9 +102,11 @@
     "pk": 8,
     "fields": {
       "name": "Коммерсантъ",
-      "url": "https://www.kommersant.ru/RSS/news_day.xml",
+      "url": "https://www.kommersant.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -100,9 +116,11 @@
     "pk": 9,
     "fields": {
       "name": "Ведомости",
-      "url": "https://www.vedomosti.ru/rss/news.xml",
+      "url": "https://www.vedomosti.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -112,9 +130,11 @@
     "pk": 10,
     "fields": {
       "name": "Forbes Россия",
-      "url": "https://www.forbes.ru/newsfeed.xml",
+      "url": "https://www.forbes.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -124,9 +144,11 @@
     "pk": 11,
     "fields": {
       "name": "Эксперт",
-      "url": "https://expert.ru/feed/",
+      "url": "https://expert.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -135,10 +157,12 @@
     "model": "news.newssource",
     "pk": 12,
     "fields": {
-      "name": "Газета.Ru (Бизнес)",
-      "url": "https://www.gazeta.ru/rss/business/",
+      "name": "Газета.Ru",
+      "url": "https://www.gazeta.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -147,10 +171,12 @@
     "model": "news.newssource",
     "pk": 13,
     "fields": {
-      "name": "Лента.ру (Экономика)",
-      "url": "https://lenta.ru/rss/economy",
+      "name": "Лента.ру",
+      "url": "https://lenta.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -160,9 +186,11 @@
     "pk": 14,
     "fields": {
       "name": "Банки.ру",
-      "url": "https://www.banki.ru/news/feed/",
+      "url": "https://www.banki.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -172,9 +200,11 @@
     "pk": 15,
     "fields": {
       "name": "Финмаркет",
-      "url": "https://www.finmarket.ru/rss/",
+      "url": "https://www.finmarket.ru",
       "tier": 3,
-      "is_active": true,
+      "feed_url": "",
+      "is_active": false,
+      "last_parsed": null,
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }

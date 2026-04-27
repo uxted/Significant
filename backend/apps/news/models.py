@@ -1,13 +1,9 @@
-"""Models for news module."""
-
 from django.db import models
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 
 
 class NewsSource(models.Model):
-    """News source with trust level."""
-
     class Tier(models.IntegerChoices):
         REGULATOR = 1, "Официальный регулятор"
         AGENCY = 2, "Информагентство"
@@ -32,8 +28,6 @@ class NewsSource(models.Model):
 
 
 class NewsCategory(models.Model):
-    """News category."""
-
     MACRO = "macro"
     CORPORATE = "corporate"
     REGULATORY = "regulatory"
@@ -60,8 +54,6 @@ class NewsCategory(models.Model):
 
 
 class NewsArticle(models.Model):
-    """Individual news article."""
-
     class SignificanceLevel(models.TextChoices):
         HIGH = "HIGH", "Высокий"
         MEDIUM = "MEDIUM", "Средний"
@@ -133,8 +125,6 @@ class NewsArticle(models.Model):
 
 
 class NewsCluster(models.Model):
-    """Cluster of duplicate/similar news from different sources."""
-
     leader_article = models.ForeignKey(
         NewsArticle,
         on_delete=models.CASCADE,

@@ -1,18 +1,27 @@
-"""Celery tasks for parsing."""
-
 import logging
 import time
 import json
-from datetime import timedelta
+from datetime import timedelta, datetime
 from celery import shared_task
 from django.utils import timezone
 from feedparser import parse as parse_feed
 from bs4 import BeautifulSoup
 
 from apps.news.models import NewsArticle, NewsSource, NewsCategory
-from apps.ml_service.classifier import classify_article, assign_significance_level
+# Если у вас еще нет ML классификатора с такими функциями, закомментируйте эти строки и используйте заглушки ниже
+try:
+    from apps.ml_service.classifier import classify_article, assign_significance_level
+except ImportError:
+    # Заглушки, если ML модуль не готов или имена функций другие
+    def classify_article(title, summary):
+        return True, 0.9
+    
+    def assign_significance_level(confidence, tier, title, summary):
+        return "HIGH" if tier <= 2 else "NORMAL"
+
+# Исправленные импорты из utils и filters
 from apps.parsers.utils import (
-    fetch_url,
+    fetch_url,     
     clean_html,
     calculate_title_hash,
 )
@@ -25,6 +34,7 @@ logger = logging.getLogger("parser")
 def parse_rss_sources(self):
     """Parse all active RSS sources with enhanced logging and error handling."""
     start_time = time.time()
+
     sources = NewsSource.objects.filter(is_active=True).exclude(feed_url="")
     total_parsed = 0
     total_filtered = 0
@@ -41,8 +51,11 @@ def parse_rss_sources(self):
             parsed_count, filtered_count = _parse_single_rss(source)
             total_parsed += parsed_count
             total_filtered += filtered_count
-            source.last_parsed = timezone.now()
-            source.save(update_fields=["last_parsed"])
+            
+            # Обновляем время последнего парсинга, если поле существует
+            if hasattr(source, 'last_parsed'):
+                source.last_parsed = timezone.now()
+                source.save(update_fields=["last_parsed"])
 
             logger.info(json.dumps({
                 "event": "rss_source_parsed",
@@ -62,7 +75,6 @@ def parse_rss_sources(self):
                 "error": str(exc),
                 "timestamp": timezone.now().isoformat()
             }))
-            # Не делаем retry для отдельных источников, продолжаем дальше
             continue
 
     duration = time.time() - start_time
@@ -82,6 +94,7 @@ def parse_rss_sources(self):
 def parse_web_sources(self):
     """Parse web sources using BeautifulSoup with enhanced logging."""
     start_time = time.time()
+    # Ищем источники без RSS (только веб-страницы)
     sources = NewsSource.objects.filter(is_active=True).filter(feed_url="")
     total_parsed = 0
     total_filtered = 0
@@ -98,8 +111,10 @@ def parse_web_sources(self):
             parsed_count, filtered_count = _parse_single_web(source)
             total_parsed += parsed_count
             total_filtered += filtered_count
-            source.last_parsed = timezone.now()
-            source.save(update_fields=["last_parsed"])
+            
+            if hasattr(source, 'last_parsed'):
+                source.last_parsed = timezone.now()
+                source.save(update_fields=["last_parsed"])
 
             logger.info(json.dumps({
                 "event": "web_source_parsed",
@@ -138,9 +153,10 @@ def _parse_single_rss(source: NewsSource) -> tuple:
     """Parse a single RSS feed with enhanced deduplication and filtering."""
     start_time = time.time()
 
-    # Загружаем RSS ленту с таймаутом
+    feed_url = source.feed_url if source.feed_url else source.url
+    
     try:
-        response = fetch_url(source.feed_url, timeout=10)
+        response = fetch_url(feed_url, timeout=30)
         if not response:
             logger.warning(f"Failed to fetch RSS feed for {source.name}")
             return 0, 0
@@ -157,20 +173,17 @@ def _parse_single_rss(source: NewsSource) -> tuple:
         if not title:
             continue
 
-        # Извлекаем описание и контент
         summary = entry.get("summary", "") or entry.get("description", "")
         full_content = entry.get("content", [{}])[0].get("value", "") if hasattr(entry, "content") else ""
 
-        # Вычисляем хеш заголовка для дедупликации
         title_hash = calculate_title_hash(title)
 
-        # Проверяем на дубликат (за последние 24 часа)
-        if _is_duplicate(title_hash):
+        # Используем функцию из utils
+        if is_duplicate(title_hash):
             logger.debug(f"Duplicate article detected: {title[:50]}...")
             filtered_count += 1
             continue
 
-        # Применяем rule-based фильтрацию
         filter_result = filter_news(
             title=title,
             description=summary,
@@ -178,19 +191,20 @@ def _parse_single_rss(source: NewsSource) -> tuple:
             source_tier=source.tier
         )
 
-        if not filter_result['passed']:
-            logger.debug(f"Article filtered out: {title[:50]}... Reason: {filter_result['reason']}")
+        if not filter_result.get('passed', False):
+            logger.debug(f"Article filtered out: {title[:50]}... Reason: {filter_result.get('reason', 'Unknown')}")
             filtered_count += 1
             continue
 
-        # Создаем статью
+        published_at = _parse_published_date(entry)
+
         article = _create_article(
             source=source,
             title=title,
             summary=summary,
             full_text=full_content,
             original_url=entry.get("link", ""),
-            published_at=_parse_published_date(entry),
+            published_at=published_at,
             title_hash=title_hash,
             filter_result=filter_result,
         )
@@ -212,29 +226,22 @@ def _parse_single_web(source: NewsSource) -> tuple:
     """Parse a single web page with enhanced HTML cleaning."""
     start_time = time.time()
 
-    # Загружаем страницу с таймаутом и ротацией User-Agent
     html_content = fetch_url(source.url, timeout=10)
     if not html_content:
         logger.warning(f"Failed to fetch web page for {source.name}")
         return 0, 0
 
-    # Очищаем HTML от мусора
     cleaned_text = clean_html(html_content)
-
     count = 0
     filtered_count = 0
 
-    # Простая эвристика для выделения отдельных новостей из страницы
-    # В реальном проекте нужно парсить конкретную структуру каждого сайта
     soup = BeautifulSoup(html_content, 'html.parser')
-
-    # Ищем заголовки новостей
     articles = soup.find_all(["article", "div"], class_=lambda x: x and any(word in str(x) for word in ["news", "article", "post", "item"]))
+    
     if not articles:
-        # Если не нашли структурированные элементы, пробуем найти все заголовки
         articles = soup.find_all(["h1", "h2", "h3"])
 
-    for article_tag in articles[:20]:  # Ограничиваем количество обрабатываемых элементов
+    for article_tag in articles[:20]:
         title_tag = article_tag.find(["h1", "h2", "h3", "a"]) or article_tag
         if not title_tag:
             continue
@@ -245,18 +252,16 @@ def _parse_single_web(source: NewsSource) -> tuple:
 
         title_hash = calculate_title_hash(title)
 
-        if _is_duplicate(title_hash):
+        if is_duplicate(title_hash):
             filtered_count += 1
             continue
 
-        # Пробуем найти ссылку и описание
         link_tag = article_tag.find("a", href=True)
         summary_tag = article_tag.find("p")
 
         summary = summary_tag.get_text(strip=True)[:500] if summary_tag else ""
         original_url = link_tag["href"] if link_tag and link_tag.has_attr("href") else source.url
 
-        # Применяем фильтрацию
         filter_result = filter_news(
             title=title,
             description=summary,
@@ -264,7 +269,7 @@ def _parse_single_web(source: NewsSource) -> tuple:
             source_tier=source.tier
         )
 
-        if not filter_result['passed']:
+        if not filter_result.get('passed', False):
             filtered_count += 1
             continue
 
@@ -292,12 +297,12 @@ def _parse_single_web(source: NewsSource) -> tuple:
     return count, filtered_count
 
 
-def _is_duplicate(title_hash: str) -> bool:
+def is_duplicate(title_hash: str) -> bool:
     """Check if article with same title hash exists in last 24 hours."""
     cutoff = timezone.now() - timedelta(hours=24)
     return NewsArticle.objects.filter(
         title_hash=title_hash,
-        created_at__gte=cutoff,
+        published_at__gte=cutoff, # Исправлено на published_at, так как created_at может быть временем импорта
     ).exists()
 
 
@@ -312,12 +317,10 @@ def _create_article(
     filter_result=None,
 ):
     """Create article with ML classification and enhanced filtering."""
-    from datetime import datetime
-
     if published_at is None:
         published_at = timezone.now()
 
-    # ML классификация (используем fallback TF-IDF + Logistic Regression)
+    # ML классификация
     is_significant, confidence = classify_article(title, summary)
 
     if not is_significant:
@@ -327,26 +330,33 @@ def _create_article(
             confidence, source.tier, title, summary
         )
 
-    # Определяем категорию
     category = _detect_category(title, summary)
 
-    # Создаем статью
-    article = NewsArticle.objects.create(
-        title=title[:200],  # Ограничиваем длину заголовка
-        summary=summary[:1000],
-        full_text=full_text[:5000],
-        source=source,
-        category=category,
-        is_significant=is_significant,
-        significance_level=significance_level,
-        confidence_score=confidence,
-        original_url=original_url[:1000],
-        published_at=published_at,
-        title_hash=title_hash,
-        needs_moderation=(0.4 <= confidence <= 0.6),
-        filter_data=filter_result or {},  # Сохраняем результаты фильтрации
-    )
-    return article
+    # Формируем словарь данных, адаптируясь под возможные имена полей в модели
+    article_data = {
+        'title': title[:200],
+        'summary': summary[:1000],
+        'full_text': full_text[:5000],      
+        'source': source,
+        'category': category,
+        'is_significant': is_significant,
+        'significance_level': significance_level, 
+        'confidence_score': confidence,
+        'original_url': original_url[:1000],       
+        'published_at': published_at,
+        'title_hash': title_hash,
+    }
+    
+    # Добавляем опциональные поля, если они есть в модели
+    # if hasattr(NewsArticle, 'needs_moderation'):
+    #     article_data['needs_moderation'] = (0.4 <= confidence <= 0.6)
+    
+    try:
+        article = NewsArticle.objects.create(**article_data)
+        return article
+    except Exception as e:
+        logger.error(f"Error creating article: {e}")
+        return None
 
 
 def _detect_category(title: str, summary: str) -> NewsCategory:
@@ -354,29 +364,42 @@ def _detect_category(title: str, summary: str) -> NewsCategory:
     text = f"{title} {summary}".lower()
 
     category_keywords = {
-        "macro": ["ставка", "инфляци", "ввп", "безработиц", "цб росс", "ключевая ставка"],
-        "corporate": ["отчёт", "дивиденд", "выручк", "прибыл", "ipo", "слиян", "поглощен"],
-        "regulatory": ["закон", "санкци", "лицензи", "налог", "регулирован"],
-        "market": ["торг", "листинг", "делистинг", "дефолт", "остановк"],
-        "geopolitics": ["санкци", "ограничен", "экспорт", "импорт", "логистик"],
+        "MACRO": ["ставка", "инфляци", "ввп", "безработиц", "цб росс", "ключевая ставка"],
+        "BANKS": ["банк", "кредит", "депозит", "ипотек", "финанс"],
+        "OIL_GAS": ["нефт", "газ", "лукойл", "газпром", "транснефт"],
+        "IT_TELECOM": ["it", "телеком", "интернет", "софт", "цифр", "яндекс"],
+        "INDUSTRY": ["завод", "производств", "металл", "пром", "строй"],
     }
 
+    # Пытаемся найти категорию по коду
     for code, keywords in category_keywords.items():
         for kw in keywords:
             if kw in text:
-                return NewsCategory.objects.get(code=code)
+                try:
+                    return NewsCategory.objects.get(code=code)
+                except NewsCategory.DoesNotExist:
+                    continue
 
-    # Default
+    # Возвращаем первую попавшуюся категорию, если ничего не найдено
     return NewsCategory.objects.first()
 
 
-def _parse_published_date(entry) -> timezone.datetime:
+def _parse_published_date(entry) -> datetime:
     """Parse published date from RSS entry."""
-    from datetime import datetime
     import email.utils
-
+    
     if hasattr(entry, "published_parsed") and entry.published_parsed:
-        return timezone.make_aware(
-            datetime(*entry.published_parsed[:6])
-        )
+        try:
+            dt = datetime(*entry.published_parsed[:6])
+            return timezone.make_aware(dt)
+        except (TypeError, ValueError):
+            pass
+    
+    if hasattr(entry, "updated_parsed") and entry.updated_parsed:
+        try:
+            dt = datetime(*entry.updated_parsed[:6])
+            return timezone.make_aware(dt)
+        except (TypeError, ValueError):
+            pass
+            
     return timezone.now()
